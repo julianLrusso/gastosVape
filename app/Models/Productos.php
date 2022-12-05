@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Models\Noticias
+ * App\Models\Productos
  *
  * @property int $id
  * @property string $nombre
@@ -20,12 +20,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Productos newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Productos query()
  * @method static \Illuminate\Database\Eloquent\Builder|Productos whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Productos whereContenido($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Productos whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Productos whereNombre($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Productos whereStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Productos wherePeso($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Productos whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Productos whereDeletedAt($value)
  */
 class Productos extends Model
 {

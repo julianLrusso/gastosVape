@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\ProductosController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,16 @@ Route::post('productos/create', [ProductosController::class, 'create'])->name('p
 Route::put('producto/{id}/update', [ProductosController::class, 'update'])->name('productos.update');
 Route::delete('producto/{id}/eliminar', [ProductosController::class, 'delete'])->name('productos.delete');
 Route::post('producto/{id}/restore', [ProductosController::class, 'restore'])->name('productos.restore');
+
+// Clientes
+Route::get('clientes', [ClientesController::class, 'all'])->name('clientes.listado');
+Route::get('cliente/{id}', [ClientesController::class, 'show'])->name('clientes.show');
+Route::post('clientes/create', [ClientesController::class, 'create'])->name('clientes.create');
+Route::get('agregarCliente', [ClientesController::class, 'createForm'])->name('clientes.agregar');
+Route::put('cliente/{id}/update', [ClientesController::class, 'update'])->name('clientes.update');
+Route::delete('cliente/{id}/eliminar', [ClientesController::class, 'delete'])->name('clientes.delete');
+Route::post('cliente/{id}/restore', [ClientesController::class, 'restore'])->name('clientes.restore');
+
 
 Route::get('ingresos', function () {
     return view('facturacion.ingresos');
