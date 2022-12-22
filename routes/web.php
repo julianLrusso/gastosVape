@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientesController;
+use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\ProductosController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,10 +38,8 @@ Route::put('cliente/{id}/update', [ClientesController::class, 'update'])->name('
 Route::delete('cliente/{id}/eliminar', [ClientesController::class, 'delete'])->name('clientes.delete');
 Route::post('cliente/{id}/restore', [ClientesController::class, 'restore'])->name('clientes.restore');
 
-
-Route::get('ingresos', function () {
-    return view('facturacion.ingresos');
-});
+// Facturacion
+Route::get('ingresos', [FacturacionController::class, 'ingresos'])->name('facturacion.ingresos');
 
 Route::get('ventas', function () {
     return view('facturacion.ventas');

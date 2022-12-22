@@ -4,12 +4,12 @@
 
 @section('main')
     <div class="container">
-
+        <input type="hidden" name="tipo" value="2">
         <div class="card mt-4">
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">Producto</label>
-                    <select class="form-control" name="" id="">
+                    <select class="form-control" name="" id="producto">
                         <option value="Vaporesso - XROS 2 Pod">Vaporesso - XROS 2 Pod</option>
                         <option value="Voopoo - Argus Air Pod">Voopoo - Argus Air Pod</option>
                         <option value="Asvape - Hita Kit">Asvape - Hita Kit</option>

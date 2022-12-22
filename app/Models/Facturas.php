@@ -24,6 +24,6 @@ class Facturas extends Model
             'gastos_tienen_productos',
             'fk_factura',
             'fk_producto'
-        );
+        )->withPivot('cantidad', 'precio');
     }
 }
