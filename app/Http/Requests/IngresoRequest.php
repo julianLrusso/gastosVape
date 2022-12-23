@@ -11,10 +11,10 @@ class IngresoRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+/*    public function authorize()
     {
         return false;
-    }
+    }*/
 
     /**
      * Get the validation rules that apply to the request.
@@ -27,7 +27,7 @@ class IngresoRequest extends FormRequest
             'flete' => 'required|numeric',
             'total' => 'required|numeric',
             'descripcion' => 'required',
-            'json_productosjson_productos' => 'required|JSON'
+            'json_productos' => 'required|JSON'
 
         ];
     }

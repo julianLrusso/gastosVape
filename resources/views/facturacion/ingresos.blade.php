@@ -1,7 +1,9 @@
 @extends('layouts.main')
 
 @section('title', 'Resumen general')
-
+<?php
+/** @var $producto \App\Models\Productos */
+?>
 @section('main')
     <div class="container">
         @if ($errors->any())
@@ -13,7 +15,8 @@
                 </ul>
             </div>
         @endif
-        <form action="" method="POST">
+        <form action="{{route('facturacion.crearIngreso')}}" method="POST">
+            @csrf
         <input type="hidden" name="tipo" value="1">
             <div class="card mt-4">
                 <div class="card-body">
@@ -24,7 +27,7 @@
                                 <select class="form-control" id="productos">
                                     <option value="">Seleccione un producto...</option>
                                     @foreach($productos as $producto)
-                                        <option value="{{$producto->id}}">{{$producto->nombre}}</option>
+                                        <option data-peso="{{$producto->peso}}" value="{{$producto->id}}">{{$producto->nombre}}</option>
                                     @endforeach
                                 </select>
                             </div>

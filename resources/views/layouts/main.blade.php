@@ -41,6 +41,11 @@
         {!! Session::get('message.success') !!}
     </div>
 @endif
+@if(Session::has('message.error'))
+    <div class="alert alert-danger container my-3">
+        {!! Session::get('message.error') !!}
+    </div>
+@endif
 
 <main class="mt-3">
     @yield('main')

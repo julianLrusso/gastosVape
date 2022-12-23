@@ -40,6 +40,9 @@ Route::post('cliente/{id}/restore', [ClientesController::class, 'restore'])->nam
 
 // Facturacion
 Route::get('ingresos', [FacturacionController::class, 'ingresos'])->name('facturacion.ingresos');
+Route::get('facturas', [FacturacionController::class, 'listadoFacturas'])->name('facturacion.listado');
+Route::post('ingresos', [FacturacionController::class, 'createIngreso'])->name('facturacion.crearIngreso');
+Route::get('ingreso/{id}', [FacturacionController::class, 'showIngreso'])->name('facturacion.showIngreso');
 
 Route::get('ventas', function () {
     return view('facturacion.ventas');

@@ -54,4 +54,14 @@ class Productos extends Model
             'peso.required'   => 'El peso es obligatorio.'
         ];
     }
+
+    public function facturas()
+    {
+        return $this->belongsToMany(
+            Facturas::class,
+            'gastos_tienen_productos',
+            'fk_producto',
+            'fk_factura'
+        )->withPivot('cantidad', 'precio');
+    }
 }
