@@ -26,7 +26,7 @@
                     <a class="nav-link active" aria-current="page" href="{{route('clientes.listado')}}">Clientes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./ingresos">Ingreso</a>
+                    <a class="nav-link active" aria-current="page" href="{{route('facturacion.listado')}}">Ingreso</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="./ventas">Venta</a>

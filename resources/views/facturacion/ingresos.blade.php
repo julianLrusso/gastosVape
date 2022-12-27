@@ -94,6 +94,7 @@
         const total = document.getElementById('total');
         const flete = document.getElementById('flete');
         const json_productos = document.getElementById('json_productos');
+        const kilo = 1000;
         let listadoProductos = [];
 
         // Escucha el botón agregar para agregar un producto
@@ -101,6 +102,7 @@
             if(selectProductos.value && cantidad.value && precio.value){
                 let producto = {
                     'producto': selectProductos.options[selectProductos.selectedIndex].text,
+                    'peso': selectProductos.options[selectProductos.selectedIndex].dataset.peso,
                     'id': selectProductos.value,
                     'cantidad': cantidad.value,
                     'precio': precio.value
@@ -121,7 +123,7 @@
             }
         })
 
-        flete.addEventListener('change', () => calcularPrecioTotal(listadoProductos))
+        flete.addEventListener('change', () => setListado(listadoProductos))
 
         /**
          * Se le pasa un array de objetos producto para armar el listado a mostrar
@@ -135,7 +137,18 @@
                         Todavía no has añadido ningún producto.
                     </div>`;
             }
+            let valorFlete = flete.value ? parseInt(flete.value) : 0;
+
             listadoProductos.forEach(producto => {
+
+                let precioFleteUnitario = 0;
+                if (valorFlete) {
+                    let cantidadPorKilo = (kilo * producto.cantidad)/(producto.peso * producto.cantidad);
+                    precioFleteUnitario = valorFlete/cantidadPorKilo;
+                }
+                let totalUnitario = parseFloat(producto.precio) + parseFloat(precioFleteUnitario);
+                producto.precio = totalUnitario;
+
                 let div = document.createElement('div');
                 div.classList.add('row');
                 div.classList.add('border');
@@ -145,11 +158,12 @@
                 div.innerHTML = `<div class="col-md-4">
                             <p>${producto.producto}</p>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <p>Cantidad: ${producto.cantidad}</p>
                         </div>
-                        <div class="col-md-3">
-                            <p>Precio unitario: ${producto.precio}</p>
+                        <div class="col-md-4">
+                            <p>Precio unitario: $${producto.precio} + flete: $${precioFleteUnitario} = $${totalUnitario} c/u</p>
+                            <p><b>Total: $${totalUnitario*producto.cantidad}</b></p>
                         </div>
                         <div class="col-md-2">
                             <button class="btn btn-danger" data-id="${producto.id}">Borrar</button>
@@ -176,11 +190,17 @@
         function calcularPrecioTotal(listadoProductos){
             let totalProvisorio = 0;
             let valorFlete = flete.value ? parseInt(flete.value) : 0;
+
             if (listadoProductos.length > 0){
                 listadoProductos.forEach(producto => {
-                    totalProvisorio += producto.cantidad * producto.precio;
+                    let precioFleteUnitario = 0;
+                    if (valorFlete) {
+                        let cantidadPorKilo = (kilo*producto.cantidad)/(producto.peso * producto.cantidad);
+                        precioFleteUnitario = valorFlete/cantidadPorKilo;
+                    }
+                    totalProvisorio += (producto.cantidad * producto.precio) + (producto.cantidad * precioFleteUnitario);
                 })
-                totalProvisorio = totalProvisorio + valorFlete;
+
             }
 
             total.value = totalProvisorio;

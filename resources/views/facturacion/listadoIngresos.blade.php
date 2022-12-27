@@ -17,7 +17,7 @@
                             <p> {{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}} </p>
                             <p>Descripcion: {{ $factura->descripcion }}</p>
                             <p>Flete: {{ $factura->flete }}</p>
-                            <p>Monto total: ${{ $factura->monto_total }}</p>
+                            <p>Monto total: ${{ number_format($factura->monto_total, 2)}}</p>
                         </div>
                     </a>
                 </div>

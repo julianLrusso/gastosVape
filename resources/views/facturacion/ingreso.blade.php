@@ -18,14 +18,14 @@
                     <p> {{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}} </p>
                     <p><b>Descripcion:</b> {{ $factura->descripcion }}</p>
                     <p><b>Flete:</b> {{ $factura->flete }}</p>
-                    <p><b>Monto total:</b> ${{ $factura->monto_total }}</p>
+                    <p><b>Monto total:</b> ${{ number_format($factura->monto_total, 2) }}</p>
                     <p>Productos:</p>
                     <div>
                         @foreach($factura->productos as $producto)
                             <ul>
                                 <li>{{$producto->nombre}} </li>
                                 <li>Cantidad: {{$producto->pivot->cantidad}}</li>
-                                <li>Precio: {{$producto->pivot->precio}}</li>
+                                <li>Precio: ${{number_format($producto->pivot->precio, 2) }}</li>
                             </ul>
                         @endforeach
 

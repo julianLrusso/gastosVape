@@ -15,7 +15,7 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
 
-                    <label>Peso: <input class="form-control" type="text" name="peso" id="peso"></label>
+                    <label>Peso en gramos: <input class="form-control" type="text" name="peso" id="peso"></label>
                     @error('peso')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror

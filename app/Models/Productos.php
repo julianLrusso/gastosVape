@@ -62,6 +62,6 @@ class Productos extends Model
             'gastos_tienen_productos',
             'fk_producto',
             'fk_factura'
-        )->withPivot('cantidad', 'precio');
+        )->withPivot('cantidad', 'precio', 'disponible');
     }
 }

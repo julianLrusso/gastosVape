@@ -46,6 +46,7 @@ class FacturacionController extends Controller
                 $factura->productos()->attach($producto->id,[
                     'cantidad' => $producto->cantidad,
                     'precio' => $producto->precio,
+                    'disponible' => $producto->cantidad
                 ]);
             }
 
