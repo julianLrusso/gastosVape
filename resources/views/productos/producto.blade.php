@@ -1,7 +1,9 @@
 @extends('layouts.main')
 
 @section('title', 'Resumen general')
-
+<?php
+$total = 0;
+?>
 @section('main')
     <div class="container">
 
@@ -58,24 +60,63 @@
 
                     <table class="table">
                         <thead>
-                        <tr>
-                            <th scope="col">Stock</th>
-                            <th scope="col">Precio</th>
-                        </tr>
+                            <tr>
+                                <th scope="col">Factura tipo</th>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Stock</th>
+                                <th scope="col">Disponible</th>
+                                <th scope="col">Precio</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td style="color: green">+50</td>
-                            <td>$-575.000,00</td>
-                        </tr>
-                        <tr>
-                            <td style="color: red">-20</td>
-                            <td>$126.000,00</td>
-                        </tr>
-                        <tr style="background-color: #ffe480">
-                            <td class="fw-bold">Total</td>
-                            <td class="fw-bold">$-449.000,00</td>
-                        </tr>
+                            @foreach($producto->facturas as $factura)
+                            <tr>
+                                <td><a href="{{route('facturacion.showIngreso', $factura->id)}}"> {{$factura->tipo->tipo}} </a></td>
+
+                                @if($factura->cliente)
+                                    <td>{{$factura->cliente->nombre}}</td>
+                                @else
+                                    <td> - </td>
+                                @endif
+
+                                @if($factura->tipo->id == 1)
+                                    <td style="color: green">+{{$factura->pivot->cantidad}}</td>
+                                @else
+                                    <td style="color: red">-{{$factura->pivot->cantidad}}</td>
+                                @endif
+
+
+                                @if($factura->pivot->disponible > 1)
+                                    <td>{{$factura->pivot->disponible}}</td>
+                                @else
+                                    <td> - </td>
+                                @endif
+
+                                @if($factura->tipo->id == 1)
+                                    <td style="color: red;">${{ number_format($factura->pivot->precio, 2) }}</td>
+                                @else
+                                    <td style="color: green">${{ number_format($factura->pivot->precio, 2) }}</td>
+                                @endif
+
+
+                                <?php if ($factura->tipo->id == 1) {
+                                    $total -= $factura->pivot->precio;
+                                } else{
+                                    $total += $factura->pivot->precio;
+                                } ?>
+
+
+                            </tr>
+                            @endforeach
+
+                            <tr style="background-color: #ffe480">
+                                <td class="fw-bold">Total</td>
+                                @if($total > 0)
+                                    <td class="fw-bold" colspan="4" style="color: green">${{$total}}</td>
+                                @else
+                                    <td class="fw-bold" colspan="4" style="color: red">${{$total}}</td>
+                                @endif
+                            </tr>
                         </tbody>
                     </table>
 

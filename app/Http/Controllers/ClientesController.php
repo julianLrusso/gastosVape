@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clientes;
+use App\Models\Facturas;
 use Illuminate\Http\Request;
 
 class ClientesController extends Controller
@@ -25,8 +26,10 @@ class ClientesController extends Controller
 
     public function show($id){
         $cliente = Clientes::withTrashed()->findOrFail($id);
+        $facturas = Facturas::where('fk_cliente','=',$id)->get();
         return view('clientes.cliente', [
-            'cliente' => $cliente
+            'cliente' => $cliente,
+            'facturas' => $facturas
         ]);
     }
 

@@ -29,7 +29,7 @@
                     <a class="nav-link active" aria-current="page" href="{{route('facturacion.listado')}}">Ingreso</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./ventas">Venta</a>
+                    <a class="nav-link active" aria-current="page" href="{{route('facturacion.showVentas')}}">Venta</a>
                 </li>
             </ul>
         </div>

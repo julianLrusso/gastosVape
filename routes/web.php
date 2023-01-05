@@ -39,11 +39,11 @@ Route::delete('cliente/{id}/eliminar', [ClientesController::class, 'delete'])->n
 Route::post('cliente/{id}/restore', [ClientesController::class, 'restore'])->name('clientes.restore');
 
 // Facturacion
-Route::get('ingresos', [FacturacionController::class, 'ingresos'])->name('facturacion.ingresos');
 Route::get('facturas', [FacturacionController::class, 'listadoFacturas'])->name('facturacion.listado');
+
+Route::get('ingresos', [FacturacionController::class, 'ingresos'])->name('facturacion.ingresos');
 Route::post('ingresos', [FacturacionController::class, 'createIngreso'])->name('facturacion.crearIngreso');
 Route::get('ingreso/{id}', [FacturacionController::class, 'showIngreso'])->name('facturacion.showIngreso');
 
-Route::get('ventas', function () {
-    return view('facturacion.ventas');
-});
+Route::get('ventas', [FacturacionController::class, 'ventas'])->name('facturacion.showVentas');
+Route::post('ventas',[FacturacionController::class, 'createVenta'])->name('facturacion.createVenta');

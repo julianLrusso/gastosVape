@@ -146,8 +146,8 @@
                     let cantidadPorKilo = (kilo * producto.cantidad)/(producto.peso * producto.cantidad);
                     precioFleteUnitario = valorFlete/cantidadPorKilo;
                 }
-                let totalUnitario = parseFloat(producto.precio) + parseFloat(precioFleteUnitario);
-                producto.precio = totalUnitario;
+                let totalUnitario = parseFloat(parseFloat(producto.precio).toFixed(2)) + parseFloat(parseFloat(precioFleteUnitario).toFixed(2));
+                producto.precioUnitario = totalUnitario;
 
                 let div = document.createElement('div');
                 div.classList.add('row');
@@ -189,16 +189,10 @@
          */
         function calcularPrecioTotal(listadoProductos){
             let totalProvisorio = 0;
-            let valorFlete = flete.value ? parseInt(flete.value) : 0;
 
             if (listadoProductos.length > 0){
                 listadoProductos.forEach(producto => {
-                    let precioFleteUnitario = 0;
-                    if (valorFlete) {
-                        let cantidadPorKilo = (kilo*producto.cantidad)/(producto.peso * producto.cantidad);
-                        precioFleteUnitario = valorFlete/cantidadPorKilo;
-                    }
-                    totalProvisorio += (producto.cantidad * producto.precio) + (producto.cantidad * precioFleteUnitario);
+                    totalProvisorio += (producto.cantidad * producto.precioUnitario);
                 })
 
             }

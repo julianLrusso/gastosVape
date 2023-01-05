@@ -20,10 +20,10 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
 
-                    <label>Valor individual: <input class="form-control" type="text" name="precio" id="precio"></label>
+                    {{--<label>Valor individual: <input class="form-control" type="text" name="precio" id="precio"></label>
                     @error('precio')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                    @enderror--}}
 
                     <div class="mt-3 d-flex justify-content-center">
                         <button class="btn btn-warning w-75">Agregar</button>

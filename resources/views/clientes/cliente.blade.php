@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('title', 'Resumen general')
-
+<?php $total = 0; ?>
 @section('main')
     <div class="container">
 
@@ -47,22 +47,42 @@
                     <table class="table">
                         <thead>
                         <tr>
-                            <th scope="col">Stock</th>
+                            <th scope="col">Factura tipo</th>
+                            <th scope="col">Productos</th>
                             <th scope="col">Precio</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td style="color: green">+50</td>
-                            <td>$-575.000,00</td>
-                        </tr>
-                        <tr>
-                            <td style="color: red">-20</td>
-                            <td>$126.000,00</td>
-                        </tr>
+                        @foreach($facturas as $factura)
+
+                            <tr>
+                                <td><a href="{{route('facturacion.showIngreso', $factura->id)}}"> {{$factura->tipo->tipo}} </a></td>
+
+                                <td>
+                                    @foreach($factura->productos as $producto)
+                                        <a href="{{route('productos.show', $producto->id)}}">{{$producto->nombre}}</a> -
+                                    @endforeach
+                                </td>
+
+                                <td>${{ number_format($factura->monto_total, 2) }}</td>
+                                    <?php if ($factura->tipo->id == 1) {
+                                    $total -= $factura->monto_total;
+                                } else{
+                                    $total += $factura->monto_total;
+                                } ?>
+
+
+                            </tr>
+
+                        @endforeach
+
                         <tr style="background-color: #ffe480">
                             <td class="fw-bold">Total</td>
-                            <td class="fw-bold">$-449.000,00</td>
+                            @if($total > 0)
+                                <td class="fw-bold" colspan="3" style="color: green">${{$total}}</td>
+                            @else
+                                <td class="fw-bold" colspan="3" style="color: red">$-{{$total}}</td>
+                            @endif
                         </tr>
                         </tbody>
                     </table>

@@ -33,4 +33,9 @@ class Facturas extends Model
             'fk_producto'
         )->withPivot('cantidad', 'precio', 'disponible');
     }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Clientes::class, 'fk_cliente');
+    }
 }

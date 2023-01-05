@@ -41,7 +41,7 @@ class Productos extends Model
     {
         return [
             'nombre' => 'required',
-            'precio'  => 'required',
+//            'precio'  => 'required',
             'peso'   => 'required'
         ];
     }
@@ -50,7 +50,7 @@ class Productos extends Model
     {
         return [
             'nombre.required' => 'El nombre es obligatorio.',
-            'precio.required'  => 'El stock es obligatorio.',
+//            'precio.required'  => 'El stock es obligatorio.',
             'peso.required'   => 'El peso es obligatorio.'
         ];
     }

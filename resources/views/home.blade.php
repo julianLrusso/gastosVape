@@ -24,9 +24,10 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th scope="col">Producto</th>
-                        <th scope="col">Stock</th>
-                        <th scope="col">Precio</th>
+                        <th scope="col">Factura Nro</th>
+                        <th scope="col">Tipo Factura</th>
+                        <th scope="col">Cliente</th>
+                        <th scope="col">Valor</th>
                     </tr>
                     </thead>
                     <tbody>
