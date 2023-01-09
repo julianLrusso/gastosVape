@@ -7,15 +7,37 @@ use App\Models\Clientes;
 use App\Models\Facturas;
 use App\Models\Productos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class FacturacionController extends Controller
 {
     public function home(){
+
         $facturas = Facturas::all();
+
         return view('home', [
             'facturas' => $facturas
         ]);
+    }
+
+    /**
+     * Home pero con las facturas filtradas por fechas
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    function homeFiltrado(Request $request) {
+        if ($request->firstDate && $request->lastDate){
+            $startDate = Carbon::createFromFormat('Y-m-d', $request->firstDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $request->lastDate)->endOfDay();
+            $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])->get();
+        } else {
+            $facturas = Facturas::all();
+        }
+        return view('home', [
+            'facturas' => $facturas
+        ])->with('message.error', 'Error al filtrar.');
+
     }
 
     /**
@@ -142,6 +164,31 @@ class FacturacionController extends Controller
      */
     public function listadoFacturas(){
         $facturas = Facturas::orderBy('id','desc')->get();
+        return view('facturacion.listadoIngresos', [
+            'facturas' => $facturas
+        ]);
+    }
+
+    /**
+     * Muestra un listado de facturas pero filtradas por fecha o tipo
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function listadoFacturasFiltrado(Request $request){
+        if ($request->firstDate && $request->lastDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $request->firstDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $request->lastDate)->endOfDay();
+            if ($request->factura_tipo){
+                $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])->where('fk_tipo', $request->factura_tipo)->orderBy('id','desc')->get();
+            } else {
+                $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])->orderBy('id','desc')->get();
+            }
+
+        } elseif ($request->factura_tipo) {
+            $facturas = Facturas::where('fk_tipo', $request->factura_tipo)->orderBy('id','desc')->get();
+        } else {
+            $facturas = Facturas::orderBy('id','desc')->get();
+        }
+
         return view('facturacion.listadoIngresos', [
             'facturas' => $facturas
         ]);

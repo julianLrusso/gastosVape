@@ -16,9 +16,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/',[FacturacionController::class, 'home'])->name('home');
+Route::post('/',[FacturacionController::class, 'homeFiltrado'])->name('homeFiltrado');
 
 // Productos
 Route::get('productos', [ProductosController::class, 'all'])->name('productos.listado');
@@ -40,6 +39,7 @@ Route::post('cliente/{id}/restore', [ClientesController::class, 'restore'])->nam
 
 // Facturacion
 Route::get('facturas', [FacturacionController::class, 'listadoFacturas'])->name('facturacion.listado');
+Route::post('facturas', [FacturacionController::class, 'listadoFacturasFiltrado'])->name('facturacion.listadoFiltrado');
 
 Route::get('ingresos', [FacturacionController::class, 'ingresos'])->name('facturacion.ingresos');
 Route::post('ingresos', [FacturacionController::class, 'createIngreso'])->name('facturacion.crearIngreso');

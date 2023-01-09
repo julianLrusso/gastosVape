@@ -16,8 +16,12 @@
             <div class="card col m-2">
                 <div class="card-body">
                     <p> {{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}} </p>
+                    <p><b>Tipo:</b> {{ $factura->tipo->tipo }}</p>
                     <p><b>Descripcion:</b> {{ $factura->descripcion }}</p>
-                    <p><b>Flete:</b> {{ $factura->flete }}</p>
+                    @if($factura->fk_cliente)
+                        <p><b>Cliente:</b> {{ $factura->cliente->nombre }}</p>
+                    @endif
+                    <p><b>Flete:</b> {{ $factura->flete == 0 ? '-' : $factura->flete}}</p>
                     <p><b>Monto total:</b> ${{ number_format($factura->monto_total, 2) }}</p>
                     <p>Productos:</p>
                     <div>

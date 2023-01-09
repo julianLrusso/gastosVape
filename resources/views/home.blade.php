@@ -3,17 +3,26 @@
 @section('title', 'Resumen general')
 
 @section('main')
+<?php /** @var  $factura \App\Models\Facturas  */
+$total = 0;
+?>
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <div>
-                <label for="">Fecha desde</label>
-                <input class="form-control" type="date">
-            </div>
-            <div class="mt-2">
-                <label for="">Fecha hasta</label>
-                <input class="form-control" type="date">
-            </div>
+            <form action="{{route('home')}}" method="POST">
+                @csrf
+                <div>
+                    <label for="firstDate">Fecha desde</label>
+                    <input class="form-control" type="date" name="firstDate" id="firstDate">
+                </div>
+                <div class="mt-2">
+                    <label for="lastDate">Fecha hasta</label>
+                    <input class="form-control" type="date" name="lastDate" id="lastDate">
+                </div>
+                <div class="mt-2 text-center">
+                    <button class="btn btn-warning w-75">Filtrar</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -31,29 +40,40 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Vaporesso - XROS 2 Pod</td>
-                        <td style="color: green">+50</td>
-                        <td>$-575.000,00</td>
-                    </tr>
-                    <tr>
-                        <td>Vaporesso - XROS 2 Pod</td>
-                        <td style="color: red">-20</td>
-                        <td>$126.000,00</td>
-                    </tr>
-                    <tr>
-                        <td>Voopoo - Argus Air Pod</td>
-                        <td style="color: green">+30</td>
-                        <td>$-192.000,00</td>
-                    </tr>
-                    <tr style="background-color: #ffe480">
-                        <td colspan="2" class="fw-bold">Total</td>
-                        <td class="fw-bold">$-641.000,00</td>
-                    </tr>
+
+                    @foreach($facturas as $factura)
+                        <tr>
+
+                            <td><a href="{{route('facturacion.showIngreso',$factura->id)}}">{{$factura->id}}</a></td>
+
+                            <td>{{$factura->tipo->tipo}}</td>
+
+                            @if($factura->cliente)
+                                <td><a href="{{route('clientes.show',$factura->cliente->id)}}">{{$factura->cliente->nombre}}</a></td>
+                            @else
+                                <td> - </td>
+                            @endif
+
+                            @if($factura->tipo->id == 1)
+                                <td style="color: red">- ${{$factura->monto_total}}</td>
+                                <?php $total -=  $factura->monto_total?>
+                            @else
+                                <td style="color: green">+ ${{$factura->monto_total}}</td>
+                                    <?php $total +=  $factura->monto_total?>
+                            @endif
+
+                        </tr>
+                    @endforeach
+
                     </tbody>
                 </table>
 
             </div>
+        </div>
+    </div>
+    <div class="card mt-3 bg-warning">
+        <div class="card-body text-center">
+            <p class="h3 fw-bold">Total: {{$total}}</p>
         </div>
     </div>
 
