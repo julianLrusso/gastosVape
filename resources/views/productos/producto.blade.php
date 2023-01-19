@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Resumen general')
+@section('title', $producto->nombre)
 <?php
 $total = 0;
 ?>
@@ -19,11 +19,6 @@ $total = 0;
 
                     <label>Peso en gramos: <input class="form-control" name="peso" id="peso" type="text" value="{{$producto->peso}}"></label>
                     @error('peso')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-
-                    <label>Valor individual: <input class="form-control" type="text" name="precio" id="precio" value="{{$producto->precio}}"></label>
-                    @error('precio')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
 
@@ -93,16 +88,16 @@ $total = 0;
                                 @endif
 
                                 @if($factura->tipo->id == 1)
-                                    <td style="color: red;">${{ number_format($factura->pivot->precio, 2) }}</td>
+                                    <td style="color: red;">${{ number_format( ($factura->pivot->precio * $factura->pivot->cantidad), 2 ) }}</td>
                                 @else
-                                    <td style="color: green">${{ number_format($factura->pivot->precio, 2) }}</td>
+                                    <td style="color: green">${{ number_format( ($factura->pivot->precio * $factura->pivot->cantidad), 2 ) }}</td>
                                 @endif
 
 
                                 <?php if ($factura->tipo->id == 1) {
-                                    $total -= $factura->pivot->precio;
+                                    $total -= ($factura->pivot->precio * $factura->pivot->cantidad);
                                 } else{
-                                    $total += $factura->pivot->precio;
+                                    $total += ($factura->pivot->precio * $factura->pivot->cantidad);
                                 } ?>
 
 

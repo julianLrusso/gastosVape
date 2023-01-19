@@ -11,13 +11,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float $flete
  * @property int $fk_cliente
  * @property int $fk_tipo
+ * @property float $utilidadTotal
  */
 class Facturas extends Model
 {
     use SoftDeletes;
     protected $table = "gastos";
 
-    protected $fillable = ['descripcion', 'monto_total', 'flete', 'fk_cliente', 'fk_tipo'];
+    protected $fillable = ['descripcion', 'monto_total', 'flete', 'fk_cliente', 'fk_tipo', 'utilidad'];
 
     public function tipo()
     {
@@ -31,7 +32,7 @@ class Facturas extends Model
             'gastos_tienen_productos',
             'fk_factura',
             'fk_producto'
-        )->withPivot('cantidad', 'precio', 'disponible');
+        )->withPivot('cantidad', 'precio', 'disponible', 'utilidad');
     }
 
     public function cliente()

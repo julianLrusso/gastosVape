@@ -30,7 +30,7 @@
                                         @foreach($producto->facturas as $factura)
                                             @if($factura->pivot->disponible > 0)
                                                 <option data-disponible="{{$factura->pivot->disponible}}" data-factura="{{$factura->id}}"
-                                                        value="{{$producto->id}}">
+                                                        data-precio="{{$factura->pivot->precio}}" value="{{$producto->id}}">
                                                     {{$producto->nombre}} ({{$factura->pivot->disponible}}u) - ${{$factura->pivot->precio}}
                                                 </option>
                                             @endif
@@ -90,6 +90,7 @@
                     <div class="mb-3">
                         <label class="form-label" for="total">Total de ingresos</label>
                         <input required name="total" id="total" type="number" class="form-control">
+                        <input name="utilidadTotal" id="utilidadTotal" type="hidden" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-warning w-100">Agregar venta</button>
 
@@ -105,6 +106,7 @@
         const cantidad = document.getElementById('cantidad');
         const precio = document.getElementById('precio');
         const total = document.getElementById('total');
+        const utilidadTotal = document.getElementById('utilidadTotal');
         const json_productos = document.getElementById('json_productos');
         let listadoProductos = [];
 
@@ -124,7 +126,8 @@
                     'cantidad': cantidad.value,
                     'precio': precio.value,
                     'disponible': selectProductos.options[selectProductos.selectedIndex].dataset.disponible,
-                    'factura': selectProductos.options[selectProductos.selectedIndex].dataset.factura
+                    'factura': selectProductos.options[selectProductos.selectedIndex].dataset.factura,
+                    'precioAntiguo': selectProductos.options[selectProductos.selectedIndex].dataset.precio
                 }
                 listadoProductos = listadoProductos.filter(product => product.id !== producto.id);
                 listadoProductos.push(producto);
@@ -198,15 +201,19 @@
          */
         function calcularGananciasTotales(listadoProductos){
             let totalProvisorio = 0;
+            let totalUtilidad = 0;
 
             if (listadoProductos.length > 0){
                 listadoProductos.forEach(producto => {
                     totalProvisorio += (producto.cantidad * producto.precio);
+                    producto.utilidad = (producto.cantidad * producto.precio) - (producto.cantidad * producto.precioAntiguo);
+                    totalUtilidad += producto.utilidad;
                 })
 
             }
 
             total.value = totalProvisorio;
+            utilidadTotal.value = totalUtilidad;
         }
 
         /**

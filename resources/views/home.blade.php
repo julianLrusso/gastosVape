@@ -5,6 +5,7 @@
 @section('main')
 <?php /** @var  $factura \App\Models\Facturas  */
 $total = 0;
+$totalUtilidad = 0;
 ?>
 <div class="container">
     <div class="card">
@@ -37,6 +38,7 @@ $total = 0;
                         <th scope="col">Tipo Factura</th>
                         <th scope="col">Cliente</th>
                         <th scope="col">Valor</th>
+                        <th scope="col">Utilidad</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -62,6 +64,13 @@ $total = 0;
                                     <?php $total +=  $factura->monto_total?>
                             @endif
 
+                            @if($factura->utilidadTotal > 0)
+                                <td style="color: green">+ ${{$factura->utilidadTotal}}</td>
+                                    <?php $totalUtilidad +=  $factura->utilidadTotal?>
+                            @else
+                                <td>-</td>
+                            @endif
+
                         </tr>
                     @endforeach
 
@@ -74,6 +83,7 @@ $total = 0;
     <div class="card mt-3 bg-warning">
         <div class="card-body text-center">
             <p class="h3 fw-bold">Total: {{$total}}</p>
+            <p class="h3 fw-bold">Total Utilidad: {{$totalUtilidad}}</p>
         </div>
     </div>
 

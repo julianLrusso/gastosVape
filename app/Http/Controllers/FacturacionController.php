@@ -126,6 +126,7 @@ class FacturacionController extends Controller
         $factura->fk_tipo = $request->tipo;
         $factura->monto_total = $request->total;
         $factura->fk_cliente = $request->cliente;
+        $factura->utilidadTotal = $request->utilidadTotal;
         $factura->flete = 0;
 
         try {
@@ -140,7 +141,8 @@ class FacturacionController extends Controller
                 $factura->productos()->attach($producto->id,[
                     'cantidad' => $producto->cantidad,
                     'precio' => $producto->precio,
-                    'disponible' => 0
+                    'disponible' => 0,
+                    'utilidad' => $producto->utilidad
                 ]);
 
                 $prodEnDb = Productos::find($producto->id);
@@ -163,9 +165,10 @@ class FacturacionController extends Controller
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function listadoFacturas(){
-        $facturas = Facturas::orderBy('id','desc')->get();
-        return view('facturacion.listadoIngresos', [
-            'facturas' => $facturas
+//        $facturas = Facturas::orderBy('id','desc')->get();
+        $clientes = Clientes::all();
+        return view('facturacion.listadoIngresos',[
+            'clientes' => $clientes
         ]);
     }
 
@@ -177,20 +180,55 @@ class FacturacionController extends Controller
         if ($request->firstDate && $request->lastDate) {
             $startDate = Carbon::createFromFormat('Y-m-d', $request->firstDate)->startOfDay();
             $endDate = Carbon::createFromFormat('Y-m-d', $request->lastDate)->endOfDay();
-            if ($request->factura_tipo){
-                $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])->where('fk_tipo', $request->factura_tipo)->orderBy('id','desc')->get();
+            if ($request->factura_tipo && $request->cliente){
+                $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])
+                    ->where('fk_tipo', $request->factura_tipo)
+                    ->where('fk_cliente', $request->cliente)
+                    ->orderBy('id','desc')
+                    ->get();
+            } elseif ($request->factura_tipo){
+                $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])
+                    ->where('fk_tipo', $request->factura_tipo)
+                    ->orderBy('id','desc')
+                    ->get();
+            } elseif ($request->cliente){
+                $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])
+                    ->where('fk_cliente', $request->cliente)
+                    ->orderBy('id','desc')
+                    ->get();
             } else {
                 $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])->orderBy('id','desc')->get();
             }
 
         } elseif ($request->factura_tipo) {
-            $facturas = Facturas::where('fk_tipo', $request->factura_tipo)->orderBy('id','desc')->get();
-        } else {
+            if($request->cliente){
+                $facturas = Facturas::where('fk_tipo', $request->factura_tipo)
+                    ->where('fk_cliente', $request->cliente)
+                    ->orderBy('id','desc')
+                    ->get();
+            } else {
+                $facturas = Facturas::where('fk_tipo', $request->factura_tipo)->orderBy('id','desc')->get();
+            }
+        } elseif ($request->cliente) {
+            $facturas = Facturas::where('fk_cliente', $request->cliente)->orderBy('id','desc')->get();
+        }else
+        {
             $facturas = Facturas::orderBy('id','desc')->get();
         }
 
+        $clientes = Clientes::all();
+        $clienteSeleccionado = $request->cliente;
+        $fechaInicialSeleccionada = $request->firstDate;
+        $fechaFinalSeleccionada = $request->lastDate;
+        $tipoSeleccionado = $request->factura_tipo;
+
         return view('facturacion.listadoIngresos', [
-            'facturas' => $facturas
+            'facturas' => $facturas,
+            'clientes' => $clientes,
+            'clienteSeleccionado' => $clienteSeleccionado,
+            'fechaInicialSeleccionada' => $fechaInicialSeleccionada,
+            'fechaFinalSeleccionada' => $fechaFinalSeleccionada,
+            'tipoSeleccionado' => $tipoSeleccionado,
         ]);
     }
 

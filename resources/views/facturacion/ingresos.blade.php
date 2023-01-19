@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Resumen general')
+@section('title', 'Agregar Ingreso')
 <?php
 /** @var $producto \App\Models\Productos */
 ?>
@@ -78,7 +78,7 @@
                         <label class="form-label" for="total">Total de gastos</label>
                         <input required name="total" id="total" type="number" class="form-control">
                     </div>
-                    <button type="submit" class="btn btn-warning w-100">Agregar venta</button>
+                    <button type="submit" class="btn btn-warning w-100">Agregar Ingreso</button>
 
                 </div>
             </div>
