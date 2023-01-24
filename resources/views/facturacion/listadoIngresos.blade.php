@@ -2,6 +2,13 @@
 
 @section('title', 'Listado de facturas')
 
+<script
+    src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
+    integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo="
+    crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 @section('main')
     <div class="container">
 
@@ -54,25 +61,45 @@
                 </form>
             </div>
         </div>
-        @if(isset($facturas))
-            <div class="row justify-content-center mt-1">
-                @foreach($facturas as $factura)
-                    <div class="card col-lg-3 m-2">
-                        <a href="{{ route('facturacion.showIngreso', ['id' => $factura->id]) }}" style="text-decoration: none; color: black">
-                            <div class="card-body">
-                                <p> {{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}} </p>
-                                <p>Tipo: {{ $factura->tipo->tipo }} </p>
-                                <p>Descripcion: {{ $factura->descripcion }}</p>
-                                <p>Flete: {{ $factura->flete }}</p>
-                                <p><b>Monto total: ${{ number_format($factura->monto_total, 2)}}</b></p>
-                            </div>
-                        </a>
-                    </div>
-                @endforeach
 
+        @if(isset($facturas))
+
+            <div class="mt-1" style="background-color: whitesmoke">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Monto Total</th>
+                        <th scope="col">#</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($facturas as $factura)
+                        <tr>
+                            <th>{{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}}</th>
+                            <td>{{ $factura->tipo->tipo }}</td>
+                            <td>{{ $factura->descripcion }}</td>
+                            <td>{{ number_format($factura->monto_total, 2) }}</td>
+                            <td>
+                                <a class="btn btn-warning" href="{{ route('facturacion.showIngreso', ['id' => $factura->id]) }}">
+                                    Ver
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
             </div>
+
         @endif
 
 
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#cliente').select2();
+        });
+    </script>
 @endsection

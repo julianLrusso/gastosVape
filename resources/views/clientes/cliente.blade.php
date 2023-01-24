@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div class="row mt-3">
+        <div class="row mt-3" style="max-height: 35vh; overflow-y: auto">
             <div class="card col">
                 <div class="card-body">
 
@@ -76,14 +76,6 @@
 
                         @endforeach
 
-                        <tr style="background-color: #ffe480">
-                            <td class="fw-bold">Total</td>
-                            @if($total > 0)
-                                <td class="fw-bold" colspan="3" style="color: green">${{$total}}</td>
-                            @else
-                                <td class="fw-bold" colspan="3" style="color: red">$-{{$total}}</td>
-                            @endif
-                        </tr>
                         </tbody>
                     </table>
 
@@ -91,5 +83,10 @@
             </div>
         </div>
 
+        <div class="card mt-3 bg-warning">
+            <div class="card-body text-center">
+                <p class="h3 fw-bold">Total: $ {{number_format($total, 2)}}</p>
+            </div>
+        </div>
     </div>
 @endsection

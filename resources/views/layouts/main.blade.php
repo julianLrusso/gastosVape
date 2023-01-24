@@ -7,8 +7,18 @@
     <title>Resumen de stock</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+    <style>
+        .estasAca {
+            border-bottom: 1px solid #0a53be;
+        }
+    </style>
 </head>
 <body style="background-color: #2a268f">
+<?php
+$rutacompleta = Illuminate\Support\Facades\Route::currentRouteName();
+$route = explode('.',$rutacompleta)[0];
+?>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -19,20 +29,21 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{route('productos.listado')}}">Productos</a>
+                <li class="nav-item ">
+                    <a class="nav-link active {{$route == 'productos' ? 'estasAca' : ''}}" aria-current="page" href="{{route('productos.listado')}}">Productos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{route('clientes.listado')}}">Clientes</a>
+                    <a class="nav-link active {{$route == 'clientes' ? 'estasAca' : ''}}" aria-current="page" href="{{route('clientes.listado')}}">Clientes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{route('facturacion.listado')}}">Facturas</a>
+                    <a class="nav-link active {{$route == 'facturacion' && $rutacompleta != 'facturacion.ingresos' && $rutacompleta != 'facturacion.showVentas' ? 'estasAca' : ''}}"
+                       aria-current="page" href="{{route('facturacion.listado')}}">Facturas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{route('facturacion.ingresos')}}">Ingreso</a>
+                    <a class="nav-link active {{$rutacompleta == 'facturacion.ingresos' ? 'estasAca' : ''}}" aria-current="page" href="{{route('facturacion.ingresos')}}">Ingreso</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{route('facturacion.showVentas')}}">Venta</a>
+                    <a class="nav-link active {{$rutacompleta == 'facturacion.showVentas' ? 'estasAca' : ''}}" aria-current="page" href="{{route('facturacion.showVentas')}}">Venta</a>
                 </li>
             </ul>
         </div>
@@ -57,5 +68,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
         crossorigin="anonymous"></script>
+
 </body>
 </html>

@@ -43,13 +43,40 @@ $total = 0;
                     @endif
                 </div>
 
-
-                <p class="mt-3"><b>Stock: {{ $producto->stock }}</b></p>
+                <div class="card mt-3" style="max-height: 35vh; overflow-y: auto">
+                    <div class="card-body text-center">
+                        <p class="h4 fw-bold">Stock Total: {{ $producto->stock }}</p>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Disponibles</th>
+                                <th scope="col">Comprados a</th>
+                                <th scope="col">En la factura</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($producto->facturas as $factura)
+                                    @if($factura->pivot->disponible > 0)
+                                        <tr>
+                                            <td>{{$factura->pivot->disponible}}</td>
+                                            <td>$ {{$factura->pivot->precio}}</td>
+                                            <td>
+                                                <a href="{{route('facturacion.showIngreso', ['id' => $factura->id])}}">
+                                                    {{$factura->id}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
             </div>
         </div>
 
-        <div class="row mt-3">
+        <div class="row mt-3" style="max-height: 35vh; overflow-y: auto">
             <div class="card col">
                 <div class="card-body">
 
@@ -60,7 +87,7 @@ $total = 0;
                                 <th scope="col">Cliente</th>
                                 <th scope="col">Stock</th>
                                 <th scope="col">Disponible</th>
-                                <th scope="col">Precio</th>
+                                <th scope="col">Precio / Utilidad</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -90,32 +117,29 @@ $total = 0;
                                 @if($factura->tipo->id == 1)
                                     <td style="color: red;">${{ number_format( ($factura->pivot->precio * $factura->pivot->cantidad), 2 ) }}</td>
                                 @else
-                                    <td style="color: green">${{ number_format( ($factura->pivot->precio * $factura->pivot->cantidad), 2 ) }}</td>
+                                    <td style="color: green">${{ number_format( $factura->pivot->utilidad, 2 ) }}</td>
                                 @endif
 
 
                                 <?php if ($factura->tipo->id == 1) {
                                     $total -= ($factura->pivot->precio * $factura->pivot->cantidad);
                                 } else{
-                                    $total += ($factura->pivot->precio * $factura->pivot->cantidad);
+                                    $total += $factura->pivot->utilidad;
                                 } ?>
 
 
                             </tr>
                             @endforeach
-
-                            <tr style="background-color: #ffe480">
-                                <td class="fw-bold">Total</td>
-                                @if($total > 0)
-                                    <td class="fw-bold" colspan="4" style="color: green">${{$total}}</td>
-                                @else
-                                    <td class="fw-bold" colspan="4" style="color: red">${{$total}}</td>
-                                @endif
-                            </tr>
                         </tbody>
                     </table>
 
                 </div>
+            </div>
+        </div>
+
+        <div class="card mt-3 bg-warning">
+            <div class="card-body text-center">
+                <p class="h3 fw-bold">Total: $ {{number_format($total, 2)}}</p>
             </div>
         </div>
 
