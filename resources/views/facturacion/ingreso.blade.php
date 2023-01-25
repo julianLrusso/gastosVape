@@ -15,27 +15,54 @@
         <div class="row justify-content-center mt-1">
             <div class="card col m-2">
                 <div class="card-body">
-                    <p> {{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}} </p>
-                    <p><b>Tipo:</b> {{ $factura->tipo->tipo }}</p>
-                    <p><b>Descripcion:</b> {{ $factura->descripcion }}</p>
-                    @if($factura->flete > 0)
-                        <p><b>Flete:</b> {{ $factura->flete }}</p>
-                    @endif
-                    @if($factura->fk_cliente)
-                        <p><b>Cliente:</b> {{ $factura->cliente->nombre }}</p>
-                    @endif
-                    @if($factura->utilidadTotal > 0)
-                        <p><b>Utilidad:</b> ${{ $factura->utilidadTotal }}</p>
-                    @endif
-                    <p><b>Monto total:</b> ${{ number_format($factura->monto_total, 2) }}</p>
-                    <p>Productos:</p>
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Flete</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Utilidad</th>
+                            <th scope="col">Monto Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>{{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}}</th>
+                                <td>{{ $factura->tipo->tipo }}</td>
+                                <td>{{ $factura->descripcion }}</td>
+                                <td>{{ $factura->flete > 0 ? $factura->flete : '-' }}</td>
+                                <td>{{ $factura->cliente->nombre ?? '-' }}</td>
+                                <td>{{ $factura->utilidadTotal > 0 ? $factura->utilidadTotal : '-' }}</td>
+                                <td>{{ number_format($factura->monto_total, 2) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mt-5">
+                        <p class="h4">Productos:</p>
+                    </div>
                     <div>
                         @foreach($factura->productos as $producto)
-                            <ul>
-                                <li>{{$producto->nombre}} </li>
-                                <li>Cantidad: {{$producto->pivot->cantidad}}</li>
-                                <li>Precio: ${{number_format($producto->pivot->precio, 2) }}</li>
-                            </ul>
+
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Precio</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <th>{{ $producto->nombre}}</th>
+                                    <td>{{ $producto->pivot->cantidad }}</td>
+                                    <td>{{ number_format($producto->pivot->precio, 2) }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         @endforeach
 
                     </div>
