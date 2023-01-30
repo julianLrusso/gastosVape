@@ -21,6 +21,7 @@ Route::post('/',[FacturacionController::class, 'homeFiltrado'])->name('homeFiltr
 
 // Productos
 Route::get('productos', [ProductosController::class, 'all'])->name('productos.listado');
+Route::post('productos', [ProductosController::class, 'listadoFiltrado'])->name('productos.listadoFiltrado');
 Route::get('producto/{id}', [ProductosController::class, 'show'])->name('productos.show');
 Route::get('agregarProducto', [ProductosController::class, 'createForm'])->name('productos.agregar');
 Route::post('productos/create', [ProductosController::class, 'create'])->name('productos.create');

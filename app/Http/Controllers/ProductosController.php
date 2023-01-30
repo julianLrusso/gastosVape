@@ -24,6 +24,26 @@ class ProductosController extends Controller
         ]);
     }
 
+
+    public function listadoFiltrado(Request $request){
+        if(isset($request->nombreProducto)){
+            return redirect()->route('productos.show', ['id' => $request->nombreProducto]);
+        } elseif ($request->nombreLike != ''){
+            $productos = Productos::withTrashed()
+                ->where('nombre','LIKE','%'.$request->nombreLike.'%')
+                ->orderBy('deleted_at')
+                ->orderBy('id', 'desc')
+                ->get();
+
+            return view('productos.listado', [
+                'productos' => $productos,
+                'input' => $request->nombreLike
+            ]);
+        } else {
+            return redirect()->route('productos.listado');
+        }
+    }
+
     /**
      * Muestra el producto
      * @param $id
