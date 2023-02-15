@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\ProductosController;
+use App\Http\Controllers\UsuariosController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +20,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'formLogin'])->name('formLogin');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::get('/register', [AuthController::class, 'formRegister'])->name('formRegister');
-Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth','isAdmin'])->group(function () {
+    // Registrar
+    Route::get('/register', [AuthController::class, 'formRegister'])->name('formRegister');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+
+    // Usuarios
+    Route::get('/usuarios', [UsuariosController::class, 'getAll'])->name('usuarios.listado');
+    Route::get('/cambiarContraseña/{id}', [UsuariosController::class, 'changePasswordForm'])->name('usuarios.changeForm');
+    Route::post('/cambiarContraseña', [AuthController::class, 'changePassword'])->name('usuarios.changePassword');
+    Route::delete('/eliminarUsuario', [UsuariosController::class, 'eraseUsuario'])->name('usuarios.eraseUsuario');
+});
 
 Route::middleware(['auth'])->group(function () {
 // Home

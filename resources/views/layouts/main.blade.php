@@ -45,9 +45,11 @@ $route = explode('.',$rutacompleta)[0];
                 <li class="nav-item">
                     <a class="nav-link active {{$rutacompleta == 'facturacion.showVentas' ? 'estasAca' : ''}}" aria-current="page" href="{{route('facturacion.showVentas')}}">Venta</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active {{$rutacompleta == 'formRegister' ? 'estasAca' : ''}}" aria-current="page" href="{{route('formRegister')}}">Registrar usuario</a>
-                </li>
+                @if(Auth::user()->rol == 'admin')
+                    <li class="nav-item">
+                        <a class="nav-link active {{$rutacompleta == 'formRegister' || $route == 'usuarios' ? 'estasAca' : ''}}" aria-current="page" href="{{route('usuarios.listado')}}">Usuarios</a>
+                    </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{{route('logout')}}">Cerrar sesión</a>
                 </li>
