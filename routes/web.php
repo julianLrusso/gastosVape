@@ -5,7 +5,6 @@ use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\UsuariosController;
-use App\Http\Middleware\isAdmin;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,7 +22,7 @@ Route::get('/login', [AuthController::class, 'formLogin'])->name('formLogin');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', isAdmin::class])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\isAdmin2::class])->group(function () {
     // Registrar
     Route::get('/register', [AuthController::class, 'formRegister'])->name('formRegister');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
