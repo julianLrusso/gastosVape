@@ -33,4 +33,11 @@
         </div>
 
     </div>
+
+    <script>
+        const peso = document.getElementById('peso');
+        peso.addEventListener('blur', () => {
+            peso.value = peso.value.replace(',','.');
+        })
+    </script>
 @endsection

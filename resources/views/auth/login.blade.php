@@ -31,7 +31,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="email">Usuario</label>
-                            <input type="email" class="form-control" id="email" name="email"
+                            <input type="text" class="form-control" id="email" name="email"
                                    aria-describedby="emailHelp">
                             @error('email')
                             <div class="text-danger">{{ $message }}</div>

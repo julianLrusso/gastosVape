@@ -27,7 +27,7 @@ class Usuario extends User
     public static function rulesMessages()
     {
         return [
-            'email.required'                 => 'El email es obligatorio.',
+            'email.required'                 => 'El usuario es obligatorio.',
             'password.required'              => 'El password es obligatorio.',
             'password.confirmed'             => 'Las contraseñas deben coincidir.',
             'password_confirmation.required' => 'Repetir la contraseña es obligatorio.',

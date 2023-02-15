@@ -51,7 +51,7 @@
                 </thead>
                 <tbody>
                 @foreach($productos as $producto)
-                <tr>
+                <tr style="{{$producto->trashed() ? 'background-color: rgba(227, 59, 59, 0.5)' : ''}}">
                     <th>{{ $producto->nombre }}</th>
                     <td>{{ $producto->stock }}</td>
                     <td>
