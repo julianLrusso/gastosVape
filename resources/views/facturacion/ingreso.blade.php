@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Ingreso de stock')
+@section('title', 'Vista factura')
 <?php
-  /** @var $factura \App\Models\Facturas */
-  /** @var $producto \App\Models\Productos */
+/** @var $factura \App\Models\Facturas */
+/** @var $producto \App\Models\Productos */
 ?>
 @section('main')
     <div class="container">
@@ -29,15 +29,15 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th>{{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}}</th>
-                                <td>{{ $factura->tipo->tipo }}</td>
-                                <td>{{ $factura->descripcion }}</td>
-                                <td>{{ $factura->flete > 0 ? $factura->flete : '-' }}</td>
-                                <td>{{ $factura->cliente->nombre ?? '-' }}</td>
-                                <td>{{ $factura->utilidadTotal > 0 ? $factura->utilidadTotal : '-' }}</td>
-                                <td>{{ number_format($factura->monto_total, 2) }}</td>
-                            </tr>
+                        <tr>
+                            <th>{{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}}</th>
+                            <td>{{ $factura->tipo->tipo }}</td>
+                            <td>{{ $factura->descripcion }}</td>
+                            <td>{{ $factura->flete > 0 ? $factura->flete : '-' }}</td>
+                            <td>{{ $factura->cliente->nombre ?? '-' }}</td>
+                            <td>{{ $factura->utilidadTotal > 0 ? $factura->utilidadTotal : '-' }}</td>
+                            <td>{{ number_format($factura->monto_total, 2) }}</td>
+                        </tr>
                         </tbody>
                     </table>
 
@@ -45,26 +45,24 @@
                         <p class="h4">Productos:</p>
                     </div>
                     <div>
-                        @foreach($factura->productos as $producto)
-
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col">Cantidad</th>
-                                    <th scope="col">Precio</th>
-                                </tr>
-                                </thead>
-                                <tbody>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Precio</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($factura->productos as $producto)
                                 <tr>
                                     <th>{{ $producto->nombre}}</th>
                                     <td>{{ $producto->pivot->cantidad }}</td>
                                     <td>{{ number_format($producto->pivot->precio, 2) }}</td>
                                 </tr>
-                                </tbody>
-                            </table>
-                        @endforeach
-
+                            @endforeach
+                            </tbody>
+                        </table>
                     </div>
 
                 </div>
