@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Clientes
     Route::get('clientes', [ClientesController::class, 'all'])->name('clientes.listado');
+    Route::post('clientes', [ClientesController::class, 'listadoFiltrado'])->name('clientes.listadoFiltrado');
     Route::get('cliente/{id}', [ClientesController::class, 'show'])->name('clientes.show');
     Route::post('clientes/create', [ClientesController::class, 'create'])->name('clientes.create');
     Route::get('agregarCliente', [ClientesController::class, 'createForm'])->name('clientes.agregar');

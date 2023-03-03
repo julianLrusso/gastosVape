@@ -33,6 +33,25 @@ class ClientesController extends Controller
         ]);
     }
 
+    public function listadoFiltrado(Request $request){
+        if(isset($request->nombreCliente)){
+            return redirect()->route('clientes.show', ['id' => $request->nombreCliente]);
+        } elseif ($request->nombreLike != ''){
+            $clientes = Clientes::withTrashed()
+                ->where('nombre','LIKE','%'.$request->nombreLike.'%')
+                ->orderBy('deleted_at')
+                ->orderBy('id', 'desc')
+                ->get();
+
+            return view('clientes.listado', [
+                'clientes' => $clientes,
+                'input' => $request->nombreLike
+            ]);
+        } else {
+            return redirect()->route('clientes.listado');
+        }
+    }
+
     public function createForm()
     {
         return view('clientes.add');

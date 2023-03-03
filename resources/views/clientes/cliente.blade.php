@@ -14,6 +14,14 @@
                     @error('nombre')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
+                    <label>Telefono: <input class="form-control" type="text" name="telefono" id="telefono" value="{{$cliente->telefono}}"></label>
+                    @error('telefono')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                    <label>Direccion: <input class="form-control" type="text" name="direccion" id="direccion" value="{{$cliente->direccion}}"></label>
+                    @error('direccion')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
 
                     <div class="mt-3 d-flex justify-content-center">
                         <button class="btn btn-warning w-75">Editar</button>

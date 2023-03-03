@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property int $id
  * @property string $nombre
+ * @property string $direccion
+ * @property string $telefono
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -29,7 +31,7 @@ class Clientes extends Model
 
     protected $primaryKey = "id";
 
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'direccion', 'telefono'];
 
     //Reglas de validación
     public static function rules()
