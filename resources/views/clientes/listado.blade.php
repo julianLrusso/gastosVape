@@ -61,4 +61,7 @@
         </div>
 
     </div>
+    <script>
+        $('#nombreCliente').select2();
+    </script>
 @endsection
