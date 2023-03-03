@@ -86,6 +86,9 @@
                                 <a class="btn btn-warning" href="{{ route('facturacion.showIngreso', ['id' => $factura->id]) }}">
                                     Ver
                                 </a>
+                                <a class="btn btn-secondary" href="{{ route('facturacion.editFacturaForm', ['id' => $factura->id]) }}">
+                                    Editar
+                                </a>
                             </td>
                         </tr>
                     @endforeach
