@@ -12,9 +12,10 @@ use Illuminate\Support\Facades\DB;
 
 class FacturacionController extends Controller
 {
-    public function home(){
+    public function home()
+    {
 
-        $facturas = Facturas::all();
+        $facturas = Facturas::orderBy('id', 'desc')->paginate(25);
 
         return view('home', [
             'facturas' => $facturas

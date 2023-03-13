@@ -76,14 +76,14 @@ $totalUtilidad = 0;
 
                     </tbody>
                 </table>
-
+                {{ $facturas->withQueryString()->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>
     <div class="card mt-3 bg-warning">
         <div class="card-body text-center">
-            <p class="h3 fw-bold">Total: {{$total}}</p>
-            <p class="h3 fw-bold">Total Utilidad: {{$totalUtilidad}}</p>
+            <p class="h3 fw-bold">Total: {{number_format( $total, 2)}}</p>
+            <p class="h3 fw-bold">Total Utilidad: {{number_format($totalUtilidad, 2)}}</p>
         </div>
     </div>
 

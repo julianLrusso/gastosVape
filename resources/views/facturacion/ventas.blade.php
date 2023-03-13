@@ -81,7 +81,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="cliente">Cliente</label>
-                        <select name="cliente" id="cliente" class="form-control">
+                        <select name="cliente" id="cliente" class="form-control" required>
                             <option value="">Seleccione un cliente...</option>
                             @foreach($clientes as $cliente)
                                 <option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
@@ -91,7 +91,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="descripcion">Descripcion</label>
-                        <textarea class="form-control" name="descripcion" id="descripcion" cols="20" rows="2"></textarea>
+                        <textarea class="form-control" name="descripcion" id="descripcion" cols="20" rows="2" required></textarea>
                     </div>
 
                     <div class="mb-3">
