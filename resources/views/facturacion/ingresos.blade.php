@@ -170,7 +170,7 @@
                         </div>
                         <div class="col-md-4">
                             <p>Precio unitario: $${producto.precio} + flete: $${precioFleteUnitario} = $${totalUnitario} c/u</p>
-                            <p><b>Total: $${totalUnitario*producto.cantidad}</b></p>
+                            <p><b>Total: $${Number( (totalUnitario*producto.cantidad).toFixed(2) )}</b></p>
                         </div>
                         <div class="col-md-2">
                             <button class="btn btn-danger" data-id="${producto.id}">Borrar</button>

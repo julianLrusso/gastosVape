@@ -27,8 +27,9 @@ class FacturacionController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    function homeFiltrado(Request $request) {
-        if ($request->firstDate && $request->lastDate){
+    function homeFiltrado(Request $request)
+    {
+        if ($request->firstDate && $request->lastDate) {
             $startDate = Carbon::createFromFormat('Y-m-d', $request->firstDate)->startOfDay();
             $endDate = Carbon::createFromFormat('Y-m-d', $request->lastDate)->endOfDay();
             $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])->get();
@@ -65,7 +66,7 @@ class FacturacionController extends Controller
 
         return view('facturacion.ventas', [
             'productos' => $productos,
-            'clientes' => $clientes
+            'clientes'  => $clientes
         ]);
     }
 
@@ -88,10 +89,10 @@ class FacturacionController extends Controller
         $factura->flete = $request->flete;
         try {
             $factura->save();
-            foreach ($productos as $producto){
-                $factura->productos()->attach($producto->id,[
-                    'cantidad' => $producto->cantidad,
-                    'precio' => $producto->precioUnitario,
+            foreach ($productos as $producto) {
+                $factura->productos()->attach($producto->id, [
+                    'cantidad'   => $producto->cantidad,
+                    'precio'     => $producto->precioUnitario,
                     'disponible' => $producto->cantidad
                 ]);
                 $prodEnDb = Productos::find($producto->id);
@@ -102,7 +103,7 @@ class FacturacionController extends Controller
             DB::commit();
             return redirect()->route('facturacion.listado')
                 ->with('message.success', 'Factura creada satisfactoriamente.');
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('facturacion.listado')
                 ->with('message.error', $e->getMessage());
@@ -115,7 +116,8 @@ class FacturacionController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function createVenta(Request $request){
+    public function createVenta(Request $request)
+    {
 
         DB::beginTransaction();
         $productos = json_decode($request->json_productos);
@@ -132,18 +134,18 @@ class FacturacionController extends Controller
 
         try {
             $factura->save();
-            foreach ($productos as $producto){
+            foreach ($productos as $producto) {
 
                 $facturaAntigua = Facturas::find($producto->factura);
-                $facturaAntigua->productos()->updateExistingPivot($producto->id,[
+                $facturaAntigua->productos()->updateExistingPivot($producto->id, [
                     'disponible' => $producto->disponible - $producto->cantidad
                 ]);
 
-                $factura->productos()->attach($producto->id,[
-                    'cantidad' => $producto->cantidad,
-                    'precio' => $producto->precio,
+                $factura->productos()->attach($producto->id, [
+                    'cantidad'   => $producto->cantidad,
+                    'precio'     => $producto->precio,
                     'disponible' => 0,
-                    'utilidad' => $producto->utilidad
+                    'utilidad'   => $producto->utilidad
                 ]);
 
                 $prodEnDb = Productos::find($producto->id);
@@ -154,7 +156,7 @@ class FacturacionController extends Controller
             DB::commit();
             return redirect()->route('facturacion.listado')
                 ->with('message.success', 'Factura creada satisfactoriamente.');
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('facturacion.listado')
                 ->with('message.error', $e->getMessage());
@@ -165,10 +167,11 @@ class FacturacionController extends Controller
      * Muestra un listado de facturas
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function listadoFacturas(){
+    public function listadoFacturas()
+    {
 //        $facturas = Facturas::orderBy('id','desc')->get();
         $clientes = Clientes::all();
-        return view('facturacion.listadoIngresos',[
+        return view('facturacion.listadoIngresos', [
             'clientes' => $clientes
         ]);
     }
@@ -177,44 +180,44 @@ class FacturacionController extends Controller
      * Muestra un listado de facturas pero filtradas por fecha o tipo
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function listadoFacturasFiltrado(Request $request){
+    public function listadoFacturasFiltrado(Request $request)
+    {
         if ($request->firstDate && $request->lastDate) {
             $startDate = Carbon::createFromFormat('Y-m-d', $request->firstDate)->startOfDay();
             $endDate = Carbon::createFromFormat('Y-m-d', $request->lastDate)->endOfDay();
-            if ($request->factura_tipo && $request->cliente){
+            if ($request->factura_tipo && $request->cliente) {
                 $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])
                     ->where('fk_tipo', $request->factura_tipo)
                     ->where('fk_cliente', $request->cliente)
-                    ->orderBy('id','desc')
+                    ->orderBy('id', 'desc')
                     ->get();
-            } elseif ($request->factura_tipo){
+            } elseif ($request->factura_tipo) {
                 $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])
                     ->where('fk_tipo', $request->factura_tipo)
-                    ->orderBy('id','desc')
+                    ->orderBy('id', 'desc')
                     ->get();
-            } elseif ($request->cliente){
+            } elseif ($request->cliente) {
                 $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])
                     ->where('fk_cliente', $request->cliente)
-                    ->orderBy('id','desc')
+                    ->orderBy('id', 'desc')
                     ->get();
             } else {
-                $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])->orderBy('id','desc')->get();
+                $facturas = Facturas::whereBetween('created_at', [$startDate, $endDate])->orderBy('id', 'desc')->get();
             }
 
         } elseif ($request->factura_tipo) {
-            if($request->cliente){
+            if ($request->cliente) {
                 $facturas = Facturas::where('fk_tipo', $request->factura_tipo)
                     ->where('fk_cliente', $request->cliente)
-                    ->orderBy('id','desc')
+                    ->orderBy('id', 'desc')
                     ->get();
             } else {
-                $facturas = Facturas::where('fk_tipo', $request->factura_tipo)->orderBy('id','desc')->get();
+                $facturas = Facturas::where('fk_tipo', $request->factura_tipo)->orderBy('id', 'desc')->get();
             }
         } elseif ($request->cliente) {
-            $facturas = Facturas::where('fk_cliente', $request->cliente)->orderBy('id','desc')->get();
-        }else
-        {
-            $facturas = Facturas::orderBy('id','desc')->get();
+            $facturas = Facturas::where('fk_cliente', $request->cliente)->orderBy('id', 'desc')->get();
+        } else {
+            $facturas = Facturas::orderBy('id', 'desc')->get();
         }
 
         $clientes = Clientes::all();
@@ -224,12 +227,12 @@ class FacturacionController extends Controller
         $tipoSeleccionado = $request->factura_tipo;
 
         return view('facturacion.listadoIngresos', [
-            'facturas' => $facturas,
-            'clientes' => $clientes,
-            'clienteSeleccionado' => $clienteSeleccionado,
+            'facturas'                 => $facturas,
+            'clientes'                 => $clientes,
+            'clienteSeleccionado'      => $clienteSeleccionado,
             'fechaInicialSeleccionada' => $fechaInicialSeleccionada,
-            'fechaFinalSeleccionada' => $fechaFinalSeleccionada,
-            'tipoSeleccionado' => $tipoSeleccionado,
+            'fechaFinalSeleccionada'   => $fechaFinalSeleccionada,
+            'tipoSeleccionado'         => $tipoSeleccionado,
         ]);
     }
 
@@ -238,10 +241,119 @@ class FacturacionController extends Controller
      * @param $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function showIngreso($id){
+    public function showIngreso($id)
+    {
         $factura = Facturas::find($id);
         return view('facturacion.ingreso', [
             'factura' => $factura
         ]);
+    }
+
+    public function showEditForm($id)
+    {
+        $factura = Facturas::find($id);
+        $clientes = Clientes::all();
+        $productos = Productos::all();
+
+        if($factura->fk_tipo == 1){
+            return view('facturacion.editCompra', [
+                'factura'   => $factura,
+                'clientes'  => $clientes,
+                'productos' => $productos
+            ]);
+        }
+        return view('facturacion.editVenta', [
+            'factura'   => $factura,
+            'clientes'  => $clientes,
+            'productos' => $productos
+        ]);
+    }
+
+    public function editarFactura(Request $request)
+    {
+        DB::beginTransaction();
+//        $productos = json_decode($request->json_productos);
+
+        /** @var $factura Facturas */
+        $factura = Facturas::find($request->id);
+
+        if($factura->fk_tipo == 1) {
+            $resultado = $this->editarFacturaCompra($factura, $request);
+        } elseif ($factura->fk_tipo == 2) {
+            $resultado = $this->editarFacturaVenta($factura, $request);
+        } else {
+            return redirect()->route('facturacion.listado')
+                ->with('message.error', 'Hubo un error encontrando el tipo de factura.');
+        }
+
+        return redirect()->route('facturacion.listado')
+            ->with($resultado["estado"], $resultado["mensaje"]);
+    }
+
+    public function editarFacturaVenta($factura, $request){
+        $factura->descripcion = $request->descripcion;
+        $factura->monto_total = $request->monto_total;
+        $factura->flete = $request->flete;
+        $factura->utilidadTotal = $request->utilidadTotal ?? NULL;
+        try {
+            $factura->save();
+//            foreach ($productos as $producto){
+//                $factura->productos()->attach($producto->id,[
+//                    'cantidad' => $producto->cantidad,
+//                    'precio' => $producto->precioUnitario,
+//                    'disponible' => $producto->cantidad
+//                ]);
+//                $prodEnDb = Productos::find($producto->id);
+//                $prodEnDb->stock = $prodEnDb->stock + $producto->cantidad;
+//                $prodEnDb->save();
+//            }
+
+            DB::commit();
+            return ["estado" => "message.success", "mensaje" => 'Venta editada con éxito.'];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ["estado" => "message.error", "mensaje" => $e->getMessage()];
+        }
+    }
+
+    public function editarFacturaCompra($factura, $request){
+        $factura->descripcion = $request->descripcion;
+        $factura->monto_total = $request->total;
+        $factura->flete = $request->flete;
+        $factura->fk_cliente = $request->cliente ?? NULL;
+        $listadoProductos = json_decode($request->json_productos);
+        $idsProductos = array();
+        try {
+            foreach ($listadoProductos as $productoListado) {
+                $producto = $factura->productos()->find($productoListado->id);
+                if ($producto !== null) {
+                    $factura->productos()->updateExistingPivot($productoListado->id,
+                        [
+                            'cantidad'   => $productoListado->cantidad,
+                            'disponible' => $productoListado->cantidad,
+                            'precio'     => $productoListado->precio
+                        ]);
+                } else {
+                    $factura->productos()->attach($productoListado->id,[
+                        'cantidad' => $productoListado->cantidad,
+                        'precio' => $productoListado->precioUnitario,
+                        'disponible' => $productoListado->cantidad
+                    ]);
+                }
+                $idsProductos[] = $productoListado->id;
+            }
+            $productosQueFaltan = $factura->productos()->whereNotIn('fk_producto', $idsProductos)->get();
+
+            foreach ($productosQueFaltan as $productoBasura){
+                $factura->productos()->detach([$productoBasura->id]);
+            }
+
+            $factura->save();
+            DB::commit();
+            return ["estado" => "message.success", "mensaje" => 'Compra editada con éxito.'];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ["estado" => "message.error", "mensaje" => $e->getMessage()];
+        }
     }
 }

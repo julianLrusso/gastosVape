@@ -32,6 +32,10 @@ Route::middleware(['auth', \App\Http\Middleware\isAdmin2::class])->group(functio
     Route::get('/cambiarContraseña/{id}', [UsuariosController::class, 'changePasswordForm'])->name('usuarios.changeForm');
     Route::post('/cambiarContraseña', [AuthController::class, 'changePassword'])->name('usuarios.changePassword');
     Route::delete('/eliminarUsuario', [UsuariosController::class, 'eraseUsuario'])->name('usuarios.eraseUsuario');
+
+    // Facturas
+    Route::get('editarFactura/{id}', [FacturacionController::class, 'showEditForm'])->name('facturacion.editFacturaForm');
+    Route::put('editarFactura/{id}', [FacturacionController::class, 'editarFactura'])->name('facturacion.editFactura');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -65,7 +69,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('ingresos', [FacturacionController::class, 'ingresos'])->name('facturacion.ingresos');
     Route::post('ingresos', [FacturacionController::class, 'createIngreso'])->name('facturacion.crearIngreso');
-    Route::get('ingreso/{id}', [FacturacionController::class, 'showIngreso'])->name('facturacion.showIngreso');
+    Route::get('factura/{id}', [FacturacionController::class, 'showIngreso'])->name('facturacion.showIngreso');
 
     Route::get('ventas', [FacturacionController::class, 'ventas'])->name('facturacion.showVentas');
     Route::post('ventas',[FacturacionController::class, 'createVenta'])->name('facturacion.createVenta');
