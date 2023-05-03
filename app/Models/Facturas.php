@@ -32,7 +32,7 @@ class Facturas extends Model
             'gastos_tienen_productos',
             'fk_factura',
             'fk_producto'
-        )->withPivot('id', 'cantidad', 'precio', 'disponible', 'utilidad');
+        )->withPivot('id', 'cantidad', 'precio', 'disponible', 'utilidad', 'precio_antiguo','fk_factura_antigua');
     }
 
     public function cliente()

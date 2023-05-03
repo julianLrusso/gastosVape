@@ -1,153 +1,133 @@
 @extends('layouts.main')
 
-@section('title', 'Ingreso de stock')
+@section('title', 'Resumen general')
 <?php
-/** @var $factura \App\Models\Facturas */
 /** @var $producto \App\Models\Productos */
 ?>
+<script
+    src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
+    integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo="
+    crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 @section('main')
     <div class="container">
-
-        <a href="{{route('facturacion.listado')}}">
-            <button class="btn btn-warning w-100 mt-2">Volver al listado</button>
-        </a>
-
-        <div class="row justify-content-center mt-1">
-            <div class="card col m-2">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form action="{{route('facturacion.editFactura', ['id' => $factura->id])}}" method="POST">
+            @method('PUT')
+            @csrf
+            <input type="hidden" name="tipo" value="2">
+            <div class="card mt-4">
                 <div class="card-body">
-                    <form action="{{route('facturacion.editFactura', ['id' => $factura->id])}}" method="post">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" value="{{$factura->id}}">
-                        <div>
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Fecha</th>
-                                    <th scope="col">Tipo</th>
-                                    <th scope="col">Descripción</th>
-                                    <th scope="col">Flete</th>
-                                    <th scope="col">Cliente</th>
-                                    <th scope="col">Utilidad</th>
-                                    <th scope="col">Monto Total</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <th>{{ \Carbon\Carbon::parse($factura->created_at)->format('d/m/Y')}}</th>
-                                    <td>
-                                        <select name="tipo" id="tipo" class="form-control">
-                                            <option value="1" {{ $factura->tipo->id == 1 ? 'selected' : '' }}>Ingreso
-                                            </option>
-                                            <option value="2" {{ $factura->tipo->id == 2 ? 'selected' : '' }}>Venta
-                                            </option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                    <textarea name="descripcion" id="descripcion" cols="20"
-                                              rows="2">{{ $factura->descripcion }}</textarea>
-                                    </td>
-                                    <td>
-                                        <input type="number" value="{{$factura->flete}}" name="flete" id="flete">
-                                    </td>
-                                    <td>
-                                        <select name="cliente" id="cliente" class="form-control">
-                                            <option value=""> -</option>
-                                            @foreach($clientes as $cliente)
-                                                <option
-                                                    value="{{$cliente->id}}" {{isset($factura->cliente->id) && $factura->cliente->id == $cliente->id ? 'selected' : ''}} >
-                                                    {{$cliente->nombre}}
+                    <div class="mb-3">
+                        <label class="form-label" for="productos">Producto</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select class="form-control" id="productos">
+                                    <option value="">Seleccione un producto...</option>
+                                    @foreach($productos as $producto)
+                                        @foreach($producto->facturas as $factura)
+                                            @if($factura->pivot->disponible > 0)
+                                                <option data-disponible="{{$factura->pivot->disponible}}" data-factura="{{$factura->id}}"
+                                                        data-precio="{{$factura->pivot->precio}}" value="{{$producto->id}}">
+                                                    {{$producto->nombre}} ({{$factura->pivot->disponible}}u) - ${{$factura->pivot->precio}}
                                                 </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="utilidadTotal" id="utilidadTotal"
-                                               value="{{$factura->utilidadTotal}}">
-                                    </td>
-                                    <td>
-                                        <input type="number" name="monto_total" id="monto_total"
-                                               value="{{$factura->monto_total}}">
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                                            @endif
+                                        @endforeach
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex">
+                                    <label for="cantidad">Cantidad: </label>
+                                    <div class="px-2">
+                                        <input id="cantidad" name="cantidad" type="number" step="1" min="0" class="form-control cantidad">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex">
+                                    <label for="precio">Precio unitario: </label>
+                                    <div class="px-2">
+                                        <input id="precio" name="precio" type="number" step="0.1" min="0" class="form-control precio">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-warning w-100" id="botonAgregar" type="button"><b>+</b></button>
+                            </div>
                         </div>
 
-                        <div class="mt-5">
-                            <p class="h4">Productos:</p>
+                        <div class="mt-3">
+                            <input type="hidden" name="json_productos" id="json_productos">
+                            <p>Productos agregados</p>
+                            <div id="divProductos">
+                                <div class="border rounded p-4">
+                                    Todavía no has añadido ningún producto.
+                                </div>
+                            </div>
                         </div>
-                        <div class="my-4 d-flex">
-                            <select name="agregarProductos" id="agregarProductos" class="form-control w-25">
-                                <option value="">Seleccione un producto...</option>
-                                @foreach($productos as $producto)
-                                    <option value="{{$producto->id}}">{{$producto->nombre}}</option>
-                                @endforeach
-                            </select>
-
-                            <button class="btn btn-warning" type="button">Agregar</button>
-                        </div>
-                        <div>
 
 
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col">Cantidad</th>
-                                    <th scope="col">Precio</th>
-                                    <th scope="col">Utilidad</th>
-                                    <th scope="col">Acciones</th>
-                                </tr>
-                                </thead>
-                                <tbody id="tablaProductos">
-                                @foreach($factura->productos as $producto)
-                                    <tr id="rowProducto-{{$producto->id}}">
-                                        <th class="producto" data-idproducto="{{$producto->id}}">
-                                            {{ $producto->nombre}}
-                                        </th>
-                                        <td>
-                                            <input id="cantidad-{{$producto->id}}" type="number" min="1"
-                                                   value="{{ $producto->pivot->cantidad }}" class="form-control">
-                                        </td>
-                                        <td>
-                                            <input id="precio-{{$producto->id}}" type="number" min="1"
-                                                   value="{{ $producto->pivot->precio }}" class="form-control">
-                                        </td>
-                                        <td>
-                                            <input id="utilidad-{{$producto->id}}" type="number" min="1"
-                                                   value="{{ $producto->pivot->utilidad }}" class="form-control">
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger eliminarProd"
-                                                    data-idproducto="{{$producto->id}}" type="button">
-                                                Eliminar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                    </div>
 
+                    <div class="mb-3">
+                        <label class="form-label" for="cliente">Cliente</label>
+                        <select name="cliente" id="cliente" class="form-control" required>
+                            <option value="">Seleccione un cliente...</option>
+                            @foreach($clientes as $cliente)
+                                <option value="{{$cliente->id}}" {{$factura->fk_cliente == $cliente->id ? 'selected' : ''}}>{{$cliente->nombre}}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                            <button class="btn btn-warning w-100" type="submit">Editar</button>
-                        </div>
-                    </form>
+                    <div class="mb-3">
+                        <label class="form-label" for="descripcion">Descripcion</label>
+                        <textarea class="form-control" name="descripcion" id="descripcion" cols="20" rows="2" required>{{$factura->descripcion}}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="total">Total de ingresos</label>
+                        <input required name="total" id="total" type="number" class="form-control">
+                        <input name="utilidadTotal" id="utilidadTotal" type="hidden" class="form-control">
+                        <input name="productosAntiguos" id="productosAntiguos" type="hidden" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">Editar venta</button>
+
                 </div>
             </div>
-
-        </div>
-
+        </form>
     </div>
-
+    <script src="{{asset('js/edicion/editarVenta.js')}}"></script>
     <script>
-        const tablaProductos = document.getElementById('tablaProductos');
+        let productoPreCargado;
+        let productosAntiguos = [];
 
-        tablaProductos.addEventListener('click', (e) => {
-            if (e.target.classList.contains('eliminarProd')) {
-                console.log(e.target.dataset.idproducto);
-                document.getElementById('rowProducto-'+e.target.dataset.idproducto).remove();
-            }
-        })
+        @foreach($factura->productos as $product)
+            productoPreCargado = {
+            'producto': "{{$product->nombre}}",
+            'peso': "{{$product->peso}}",
+            'id': "{{$product->id}}",
+            'cantidad': "{{ $product->pivot->cantidad }}",
+            'cantidad_antigua': "{{ $product->pivot->cantidad }}",
+            'precioAntiguo': "{{ $product->pivot->precio_antiguo }}",
+            'factura': "{{ $product->pivot->fk_factura_antigua }}",
+            'precio': "{{$product->pivot->precio }}"
+        }
+        listadoProductos = listadoProductos.filter(product => product.id !== productoPreCargado.id);
+        listadoProductos.push(productoPreCargado);
+        productosAntiguos.push(productoPreCargado);
+        setListado(listadoProductos);
+        @endforeach
     </script>
+
 @endsection

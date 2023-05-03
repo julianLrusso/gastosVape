@@ -142,10 +142,12 @@ class FacturacionController extends Controller
                 ]);
 
                 $factura->productos()->attach($producto->id, [
-                    'cantidad'   => $producto->cantidad,
-                    'precio'     => $producto->precio,
-                    'disponible' => 0,
-                    'utilidad'   => $producto->utilidad
+                    'cantidad'           => $producto->cantidad,
+                    'precio'             => $producto->precio,
+                    'disponible'         => 0,
+                    'utilidad'           => $producto->utilidad,
+                    'fk_factura_antigua' => $producto->factura,
+                    'precio_antiguo'     => $producto->precioAntiguo
                 ]);
 
                 $prodEnDb = Productos::find($producto->id);
@@ -255,7 +257,7 @@ class FacturacionController extends Controller
         $clientes = Clientes::all();
         $productos = Productos::all();
 
-        if($factura->fk_tipo == 1){
+        if ($factura->fk_tipo == 1) {
             return view('facturacion.editCompra', [
                 'factura'   => $factura,
                 'clientes'  => $clientes,
@@ -277,7 +279,7 @@ class FacturacionController extends Controller
         /** @var $factura Facturas */
         $factura = Facturas::find($request->id);
 
-        if($factura->fk_tipo == 1) {
+        if ($factura->fk_tipo == 1) {
             $resultado = $this->editarFacturaCompra($factura, $request);
         } elseif ($factura->fk_tipo == 2) {
             $resultado = $this->editarFacturaVenta($factura, $request);
@@ -290,24 +292,77 @@ class FacturacionController extends Controller
             ->with($resultado["estado"], $resultado["mensaje"]);
     }
 
-    public function editarFacturaVenta($factura, $request){
-        $factura->descripcion = $request->descripcion;
-        $factura->monto_total = $request->monto_total;
-        $factura->flete = $request->flete;
-        $factura->utilidadTotal = $request->utilidadTotal ?? NULL;
-        try {
-            $factura->save();
-//            foreach ($productos as $producto){
-//                $factura->productos()->attach($producto->id,[
-//                    'cantidad' => $producto->cantidad,
-//                    'precio' => $producto->precioUnitario,
-//                    'disponible' => $producto->cantidad
-//                ]);
-//                $prodEnDb = Productos::find($producto->id);
-//                $prodEnDb->stock = $prodEnDb->stock + $producto->cantidad;
-//                $prodEnDb->save();
-//            }
+    public function eliminarFacturaVenta($id) {
+        $factura = Facturas::find($id);
+        foreach ($factura->productos as $producto) {
+            $facturaAntigua = Facturas::find($producto->pivot->fk_factura_antigua);
+            $productoAntiguo = $facturaAntigua->productos()->find($producto->id);
+            $facturaAntigua->productos()->updateExistingPivot($producto->id,
+                [
+                    'disponible' => ($productoAntiguo->pivot->disponible + $producto->pivot->cantidad)
+                ]);
+            $producto->stock = $producto->stock + $producto->pivot->cantidad;
+            $producto->save();
+        }
+        $factura->delete();
 
+        return redirect()->route('facturacion.listado')
+            ->with(["estado" => "message.success", "mensaje" => 'Venta eliminada con éxito.']);
+    }
+
+    public function eliminarFacturaCompra($id) {
+        $factura = Facturas::find($id);
+        foreach ($factura->productos as $producto) {
+            $producto->stock = $producto->stock - $producto->pivot->cantidad;
+            $producto->save();
+        }
+        $factura->delete();
+
+        return redirect()->route('facturacion.listado')
+            ->with(["estado" => "message.success", "mensaje" => 'Compra eliminada con éxito.']);
+    }
+
+    /**
+     * Edita la factura de venta
+     * @param $factura
+     * @param $request
+     * @return array|string[]
+     */
+    public function editarFacturaVenta($factura, $request)
+    {
+        $factura->descripcion       = $request->descripcion;
+        $factura->monto_total       = $request->total;
+        $factura->flete             = $request->flete ?? NULL;
+        $factura->utilidadTotal     = $request->utilidadTotal ?? NULL;
+        $factura->fk_cliente        = $request->cliente ?? NULL;
+        $listadoProductos           = (array)json_decode($request->json_productos);
+        $listadoProductosAntiguos   = (array)json_decode($request->productosAntiguos);
+
+        try {
+            foreach ($listadoProductos as $productoListado) {
+                $producto = $factura->productos()->find($productoListado->id);
+                if ($producto !== null) {
+                    $factura->productos()->updateExistingPivot($productoListado->id,
+                        [
+                            'cantidad'   => ($producto->cantidad - $productoListado->cantidad),
+                            'disponible' => ($producto->disponible - $productoListado->cantidad)
+                        ]);
+                } else {
+                    $factura->productos()->attach($productoListado->id, [
+                        'cantidad'   => $productoListado->cantidad,
+                        'precio'     => $productoListado->precioUnitario,
+                        'disponible' => $productoListado->cantidad
+                    ]);
+                }
+                $idsProductos[] = $productoListado->id;
+            }
+            $productosQueFaltan = $factura->productos()->whereNotIn('fk_producto', $idsProductos)->get();
+
+            foreach ($productosQueFaltan as $productoBasura) {
+                $factura->productos()->detach([$productoBasura->id]);
+            }
+
+            $factura->save();
             DB::commit();
             return ["estado" => "message.success", "mensaje" => 'Venta editada con éxito.'];
         } catch (\Exception $e) {
@@ -316,7 +371,8 @@ class FacturacionController extends Controller
         }
     }
 
-    public function editarFacturaCompra($factura, $request){
+    public function editarFacturaCompra($factura, $request)
+    {
         $factura->descripcion = $request->descripcion;
         $factura->monto_total = $request->total;
         $factura->flete = $request->flete;
@@ -326,6 +382,9 @@ class FacturacionController extends Controller
         try {
             foreach ($listadoProductos as $productoListado) {
                 $producto = $factura->productos()->find($productoListado->id);
+                $facturaAntigua = Facturas::find($producto->pivot->fk_factura_antigua);
+                $productoAntiguo = $facturaAntigua->productos()->find($producto->id);
+
                 if ($producto !== null) {
                     $factura->productos()->updateExistingPivot($productoListado->id,
                         [
@@ -333,18 +392,23 @@ class FacturacionController extends Controller
                             'disponible' => $productoListado->cantidad,
                             'precio'     => $productoListado->precio
                         ]);
+                    $producto->stock = $producto->stock + ($productoListado->cantidad - $productoAntiguo->pivot->cantidad);
+
                 } else {
-                    $factura->productos()->attach($productoListado->id,[
-                        'cantidad' => $productoListado->cantidad,
-                        'precio' => $productoListado->precioUnitario,
+                    $factura->productos()->attach($productoListado->id, [
+                        'cantidad'   => $productoListado->cantidad,
+                        'precio'     => $productoListado->precioUnitario,
                         'disponible' => $productoListado->cantidad
                     ]);
+                    $producto = Productos::find($productoListado->id);
+                    $producto->stock = $producto->stock + $productoListado->cantidad;
                 }
+                $producto->save();
                 $idsProductos[] = $productoListado->id;
             }
             $productosQueFaltan = $factura->productos()->whereNotIn('fk_producto', $idsProductos)->get();
 
-            foreach ($productosQueFaltan as $productoBasura){
+            foreach ($productosQueFaltan as $productoBasura) {
                 $factura->productos()->detach([$productoBasura->id]);
             }
 
@@ -356,4 +420,5 @@ class FacturacionController extends Controller
             return ["estado" => "message.error", "mensaje" => $e->getMessage()];
         }
     }
+
 }

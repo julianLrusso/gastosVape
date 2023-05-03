@@ -65,7 +65,7 @@
         @if(isset($facturas))
 
             <div class="mt-1" style="background-color: whitesmoke">
-                <table class="table table-striped">
+                <table class="table table-striped" id="tablaFacturas">
                     <thead>
                     <tr>
                         <th scope="col">Fecha</th>
@@ -82,13 +82,25 @@
                             <td>{{ $factura->tipo->tipo }}</td>
                             <td>{{ $factura->descripcion }}</td>
                             <td>{{ number_format($factura->monto_total, 2) }}</td>
-                            <td>
+                            <td class="d-flex">
                                 <a class="btn btn-warning" href="{{ route('facturacion.showIngreso', ['id' => $factura->id]) }}">
                                     Ver
                                 </a>
-                                <a class="btn btn-secondary" href="{{ route('facturacion.editFacturaForm', ['id' => $factura->id]) }}">
-                                    Editar
-                                </a>
+                                @if($factura->tipo->tipo == 'Ingreso')
+                                    <form id="eliminarFactura" style="margin: 0 0 0 10px;" action="{{route('facturacion.eliminarFacturaCompra', ['id' => $factura->id])}}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger eliminarFactura" type="button">Eliminar</button>
+                                    </form>
+                                @else
+
+                                    <form id="eliminarFactura" style="margin: 0 0 0 10px;" action="{{route('facturacion.eliminarFacturaVenta', ['id' => $factura->id])}}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger eliminarFactura" type="button">Eliminar</button>
+                                    </form>
+                                @endif
+
                             </td>
                         </tr>
                     @endforeach
@@ -104,5 +116,16 @@
         $(document).ready(function() {
             $('#cliente').select2();
         });
+        const tablaFacturas = document.getElementById('tablaFacturas');
+
+        tablaFacturas.addEventListener('click', (e) => {
+            if(e.target.classList.contains('eliminarFactura')){
+                const formEliminarFactura = e.target.parentNode;
+                if(confirm('¿Estás seguro que deseas eliminar la factura?')){
+                    formEliminarFactura.submit();
+                }
+            }
+        })
+
     </script>
 @endsection

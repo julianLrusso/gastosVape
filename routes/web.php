@@ -36,6 +36,9 @@ Route::middleware(['auth', \App\Http\Middleware\isAdmin2::class])->group(functio
     // Facturas
     Route::get('editarFactura/{id}', [FacturacionController::class, 'showEditForm'])->name('facturacion.editFacturaForm');
     Route::put('editarFactura/{id}', [FacturacionController::class, 'editarFactura'])->name('facturacion.editFactura');
+    Route::delete('eliminarFactura/{id}', [FacturacionController::class, 'eliminarFacturaVenta'])->name('facturacion.eliminarFacturaVenta');
+    Route::delete('eliminarFacturaCompra/{id}', [FacturacionController::class, 'eliminarFacturaCompra'])->name('facturacion.eliminarFacturaCompra');
+
 });
 
 Route::middleware(['auth'])->group(function () {
